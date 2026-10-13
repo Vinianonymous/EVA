@@ -1,4 +1,4 @@
-## EVA
+# E.V.A.
 
 **Idea de negocio:**  Libreria virtual (Utiles,  impresiones)
 Nombre: EVA
@@ -16,7 +16,7 @@ Nombre: EVA
 # Integrantes:
 - Vinicius Rodrigues
 - Emilio Morinigo
-- Ariel
+- Ariel Araujo
   
 # Tablas que van a utilizar:
 - Productos
