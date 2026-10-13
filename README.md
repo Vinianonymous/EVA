@@ -1,25 +1,26 @@
-# EVA
+## EVA
 
 **Idea de negocio:**  Libreria virtual (Utiles,  impresiones)
 Nombre: EVA
 
-Productos:
+# Productos:
 - lapices (Papel o color), boligrafos, borradores, hojas sacapuntas, reglas, carpetas, pinceles, material artistico
 - Cosas con material reciclado (Organizadores, ...)
 - Presilladora, perforadora, pegamento (Plasticola, isocola)
 - Mochilas
 
-Marketing:
+# Marketing:
 - Tiktok, ig, yt
 - folletos
 
-Integrantes:
+# Integrantes:
 - Vinicius Rodrigues
 - Emilio Morinigo
 - Ariel
-Tablas que van a utilizar:
+  
+# Tablas que van a utilizar:
 - Productos
 - Inventario
 - Proveedores
 - Ventas
-	- Detalle de ventas
+- Detalle de ventas
