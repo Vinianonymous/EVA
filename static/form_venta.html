@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registrar Venta - EVA</title>
+  </head>
+  <body>
+    <header>
+      <h1>EVA</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="productos.html">Productos</a></li>
+          <li><a href="ventas.html">Ventas</a></li>
+          <li><a href="proveedores.html">Proveedores</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Registrar Venta</h2>
+      <form action="#" method="post">
+        <p>
+          <label for="cliente">Cliente:</label>
+          <input type="text" id="cliente" name="cliente" />
+        </p>
+        <p>
+          <label for="fecha">Fecha:</label>
+          <input type="date" id="fecha" name="fecha" />
+        </p>
+        <h3>Detalle de Venta</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select name="producto1">
+                  <option value="">Seleccionar producto</option>
+                  <option value="1">Cuaderno A5</option>
+                  <option value="2">Pack de biromes</option>
+                </select>
+              </td>
+              <td><input type="number" name="cantidad1" /></td>
+              <td><input type="number" name="precio1" step="0.01" /></td>
+            </tr>
+          </tbody>
+        </table>
+        <p><button type="button">Agregar otro producto</button></p>
+        <p>
+          <button type="submit">Guardar</button>
+          <a href="ventas.html">Cancelar</a>
+        </p>
+      </form>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 EVA</p>
+    </footer>
+  </body>
+</html>
