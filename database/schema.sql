@@ -1,33 +1,22 @@
-CREATE DATABASE IF NOT EXISTS eva
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
 
-USE eva;
+PRAGMA foreign_keys = ON;
 
--- 1. PROVEEDORES
-CREATE TABLE proveedores (
-    id_proveedor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    telefono VARCHAR(20),
-    correo VARCHAR(100),
-    direccion VARCHAR(200)
+CREATE TABLE IF NOT EXISTS proveedores (
+    id_proveedor INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    telefono TEXT,
+    correo TEXT,
+    direccion TEXT
 );
 
--- 2. PRODUCTOS
-CREATE TABLE productos (
-    id_producto INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    categoria VARCHAR(50) NOT NULL,
+CREATE TABLE IF NOT EXISTS productos (
+    id_producto INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    categoria TEXT NOT NULL,
     descripcion TEXT,
-    precio_compra DECIMAL(12,2) NOT NULL,
-    precio_venta DECIMAL(12,2) NOT NULL,
-    id_proveedor INT,
-
-    CONSTRAINT chk_precio_compra
-        CHECK (precio_compra >= 0),
-
-    CONSTRAINT chk_precio_venta
-        CHECK (precio_venta >= 0),
+    precio_compra NUMERIC NOT NULL CHECK(precio_compra >= 0),
+    precio_venta NUMERIC NOT NULL CHECK(precio_venta >= 0),
+    id_proveedor INTEGER,
 
     FOREIGN KEY (id_proveedor)
         REFERENCES proveedores(id_proveedor)
@@ -35,18 +24,14 @@ CREATE TABLE productos (
         ON UPDATE CASCADE
 );
 
--- 3. INVENTARIO
-CREATE TABLE inventario (
-    id_inventario INT AUTO_INCREMENT PRIMARY KEY,
-    id_producto INT NOT NULL UNIQUE,
-    cantidad_disponible INT NOT NULL DEFAULT 0,
-    stock_minimo INT NOT NULL DEFAULT 5,
-    ultima_actualizacion TIMESTAMP
-        DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-
-    CHECK (cantidad_disponible >= 0),
-    CHECK (stock_minimo >= 0),
+CREATE TABLE IF NOT EXISTS inventario (
+    id_inventario INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_producto INTEGER NOT NULL UNIQUE,
+    cantidad_disponible INTEGER NOT NULL DEFAULT 0
+        CHECK(cantidad_disponible >= 0),
+    stock_minimo INTEGER NOT NULL DEFAULT 5
+        CHECK(stock_minimo >= 0),
+    ultima_actualizacion TEXT DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (id_producto)
         REFERENCES productos(id_producto)
@@ -54,31 +39,23 @@ CREATE TABLE inventario (
         ON UPDATE CASCADE
 );
 
--- 4. VENTAS
-CREATE TABLE ventas (
-    id_venta INT AUTO_INCREMENT PRIMARY KEY,
-    fecha_venta DATETIME DEFAULT CURRENT_TIMESTAMP,
-    nombre_cliente VARCHAR(100) NOT NULL,
-    total DECIMAL(12,2) NOT NULL DEFAULT 0,
-    metodo_pago VARCHAR(30),
-    estado VARCHAR(30) NOT NULL DEFAULT 'completada',
-
-    CHECK (total >= 0)
+CREATE TABLE IF NOT EXISTS ventas (
+    id_venta INTEGER PRIMARY KEY AUTOINCREMENT,
+    fecha_venta TEXT DEFAULT CURRENT_TIMESTAMP,
+    nombre_cliente TEXT NOT NULL,
+    total NUMERIC NOT NULL DEFAULT 0 CHECK(total >= 0),
+    metodo_pago TEXT,
+    estado TEXT NOT NULL DEFAULT 'completada'
 );
 
--- 5. DETALLE DE VENTAS
-CREATE TABLE detalle_ventas (
-    id_detalle INT AUTO_INCREMENT PRIMARY KEY,
-    id_venta INT NOT NULL,
-    id_producto INT NOT NULL,
-    cantidad INT NOT NULL,
-    precio_unitario DECIMAL(12,2) NOT NULL,
-    subtotal DECIMAL(12,2)
-        GENERATED ALWAYS AS
+CREATE TABLE IF NOT EXISTS detalle_ventas (
+    id_detalle INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_venta INTEGER NOT NULL,
+    id_producto INTEGER NOT NULL,
+    cantidad INTEGER NOT NULL CHECK(cantidad > 0),
+    precio_unitario NUMERIC NOT NULL CHECK(precio_unitario >= 0),
+    subtotal NUMERIC GENERATED ALWAYS AS
         (cantidad * precio_unitario) STORED,
-
-    CHECK (cantidad > 0),
-    CHECK (precio_unitario >= 0),
 
     FOREIGN KEY (id_venta)
         REFERENCES ventas(id_venta)
@@ -90,3 +67,4 @@ CREATE TABLE detalle_ventas (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
+
