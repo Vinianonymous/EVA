@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Resumen{% endblock %}
+{% block content %}
+<h2>Resumen</h2>
+<dl>
+  <dt>Productos activos</dt><dd>{{ resumen.productos }}</dd>
+  <dt>Proveedores</dt><dd>{{ resumen.proveedores }}</dd>
+  <dt>Ventas vigentes</dt><dd>{{ resumen.ventas }}</dd>
+  <dt>Total vendido (sin anulaciones)</dt><dd>{{ '%.2f'|format(resumen.total) }}</dd>
+</dl>
+<p><a href="{{ url_for('nueva_venta') }}">Registrar una venta</a></p>
+{% endblock %}

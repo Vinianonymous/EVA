@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if producto else 'Agregar' }} producto{% endblock %}
+{% block content %}
+<h2>{{ 'Editar' if producto else 'Agregar' }} producto</h2>
+{% if proveedores %}
+<form method="post" action="{{ url_for('editar_producto', id=producto.id) if producto else url_for('crear_producto') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Nombre <input name="nombre" maxlength="120" value="{{ producto.nombre if producto else '' }}" required></label>
+  <label>Descripción <textarea name="descripcion" maxlength="1000">{{ producto.descripcion if producto else '' }}</textarea></label>
+  <label>Precio <input name="precio" type="number" min="0" max="9999999999.99" step="0.01" value="{{ producto.precio if producto else '' }}" required></label>
+  <label>Proveedor
+    <select name="proveedor_id" required>
+      {% for proveedor in proveedores %}
+      <option value="{{ proveedor.id }}" {% if producto and producto.proveedor_id == proveedor.id %}selected{% endif %}>{{ proveedor.nombre }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% if producto %}
+  <label><input type="checkbox" name="activo" value="1" {% if producto.activo %}checked{% endif %}> Activo</label>
+  {% else %}
+  <label>Stock inicial <input name="cantidad" type="number" min="0" max="2147483647" step="1" value="0" required></label>
+  {% endif %}
+  <button type="submit">Guardar</button>
+  <a href="{{ url_for('productos') }}">Cancelar</a>
+</form>
+{% else %}
+<p>Primero debe <a href="{{ url_for('nuevo_proveedor') }}">registrar un proveedor</a>.</p>
+{% endif %}
+{% endblock %}

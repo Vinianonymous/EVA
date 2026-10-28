@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Ventas{% endblock %}
+{% block content %}
+<h2>Ventas</h2>
+<p><a href="{{ url_for('nueva_venta') }}">Registrar venta</a></p>
+<div class="tabla">
+  <table>
+    <thead><tr><th>Número</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Detalle</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for venta in ventas %}
+      <tr>
+        <td>{{ venta.id }}</td><td>{{ venta.fecha }}</td><td>{{ '%.2f'|format(venta.total) }}</td>
+        <td>{{ 'Anulada' if venta.anulada else 'Vigente' }}</td>
+        <td><ul>
+          {% for detalle in detalles.get(venta.id, []) %}
+          <li>{{ detalle.nombre }}: {{ detalle.cantidad }} × {{ '%.2f'|format(detalle.precio_unitario) }}</li>
+          {% endfor %}
+        </ul></td>
+        <td>
+          {% if not venta.anulada %}
+          <form method="post" action="{{ url_for('anular_venta', id=venta.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Anular y restaurar stock</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}<tr><td colspan="6">No hay ventas registradas.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

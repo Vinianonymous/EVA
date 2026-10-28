@@ -1,0 +1,17 @@
+:root { font-family: system-ui, sans-serif; color: #202a32; background: #f6f8fa; }
+body { max-width: 1200px; margin: auto; padding: 1rem; }
+nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+a { color: #185b98; }
+main { background: white; border-radius: .5rem; padding: 1.5rem; }
+.tabla { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; vertical-align: top; padding: .75rem; border-bottom: 1px solid #d7dee4; }
+label { display: block; margin: .75rem 0; }
+input:not([type="checkbox"]), select, textarea { display: block; box-sizing: border-box; max-width: 100%; width: 22rem; padding: .5rem; }
+input[type="number"] { width: 10rem; }
+button { cursor: pointer; padding: .5rem .8rem; margin: .3rem 0; }
+.mensaje { padding: 1rem; border: 1px solid; }
+.exito { background: #e3f5e8; color: #165c2b; }
+.error { background: #ffeded; color: #8c2323; }
+dt { font-weight: bold; }
+dd { margin: .25rem 0 1rem; }

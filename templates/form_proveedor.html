@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if proveedor else 'Agregar' }} proveedor{% endblock %}
+{% block content %}
+<h2>{{ 'Editar' if proveedor else 'Agregar' }} proveedor</h2>
+<form method="post" action="{{ url_for('editar_proveedor', id=proveedor.id) if proveedor else url_for('crear_proveedor') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Nombre <input name="nombre" maxlength="120" value="{{ proveedor.nombre if proveedor else '' }}" required></label>
+  <label>Teléfono <input name="telefono" type="tel" maxlength="30" value="{{ proveedor.telefono if proveedor else '' }}"></label>
+  <label>Dirección <input name="direccion" maxlength="255" value="{{ proveedor.direccion if proveedor else '' }}"></label>
+  <button type="submit">Guardar</button>
+  <a href="{{ url_for('proveedores') }}">Cancelar</a>
+</form>
+{% endblock %}
