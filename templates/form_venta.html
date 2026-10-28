@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Registrar venta{% endblock %}
+{% block content %}
+<h2>Registrar venta</h2>
+{% if productos %}
+<p>Indique las cantidades a vender. Deje en cero los productos que no desea incluir.</p>
+<form method="post" action="{{ url_for('crear_venta') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="tabla">
+    <table>
+      <thead><tr><th>Producto</th><th>Precio unitario</th><th>Stock</th><th>Cantidad</th></tr></thead>
+      <tbody>
+        {% for producto in productos %}
+        <tr>
+          <td>{{ producto.nombre }}<input type="hidden" name="producto_id" value="{{ producto.id }}"></td>
+          <td>{{ '%.2f'|format(producto.precio) }}</td><td>{{ producto.cantidad }}</td>
+          <td><input aria-label="Cantidad de {{ producto.nombre }}" name="cantidad" type="number" min="0" max="{{ producto.cantidad }}" step="1" value="0" required></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p>El servidor verifica el stock y calcula el total con los precios vigentes al confirmar.</p>
+  <button type="submit">Confirmar venta</button>
+  <a href="{{ url_for('ventas') }}">Cancelar</a>
+</form>
+{% else %}
+<p>No hay productos activos con stock disponible. <a href="{{ url_for('productos') }}">Revisar inventario</a>.</p>
+{% endif %}
+{% endblock %}
