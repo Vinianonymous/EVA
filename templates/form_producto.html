@@ -1,29 +1,23 @@
 {% extends 'base.html' %}
 {% block title %}{{ 'Editar' if producto else 'Agregar' }} producto{% endblock %}
 {% block content %}
-<h2>{{ 'Editar' if producto else 'Agregar' }} producto</h2>
+<a class="back-link" href="{{ url_for('productos') }}">← Productos e inventario</a>
+<div class="page-heading"><div><p class="eyebrow">UNA NUEVA POSIBILIDAD</p><h1>{{ 'Editar' if producto else 'Agregar' }} producto<span class="accent">.</span></h1><p>Los datos se reflejan en el catálogo. Los campos con * son obligatorios.</p></div></div>
 {% if proveedores %}
-<form method="post" action="{{ url_for('editar_producto', id=producto.id) if producto else url_for('crear_producto') }}">
+<form class="panel form-panel" method="post" action="{{ url_for('editar_producto', id=producto.id) if producto else url_for('crear_producto') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Nombre <input name="nombre" maxlength="120" value="{{ producto.nombre if producto else '' }}" required></label>
-  <label>Descripción <textarea name="descripcion" maxlength="1000">{{ producto.descripcion if producto else '' }}</textarea></label>
-  <label>Precio <input name="precio" type="number" min="0" max="9999999999.99" step="0.01" value="{{ producto.precio if producto else '' }}" required></label>
-  <label>Proveedor
-    <select name="proveedor_id" required>
-      {% for proveedor in proveedores %}
-      <option value="{{ proveedor.id }}" {% if producto and producto.proveedor_id == proveedor.id %}selected{% endif %}>{{ proveedor.nombre }}</option>
-      {% endfor %}
-    </select>
-  </label>
-  {% if producto %}
-  <label><input type="checkbox" name="activo" value="1" {% if producto.activo %}checked{% endif %}> Activo</label>
-  {% else %}
-  <label>Stock inicial <input name="cantidad" type="number" min="0" max="2147483647" step="1" value="0" required></label>
-  {% endif %}
-  <button type="submit">Guardar</button>
-  <a href="{{ url_for('productos') }}">Cancelar</a>
+  <div class="form-grid">
+    <label class="full-width">Nombre *<input name="nombre" maxlength="120" value="{{ producto.nombre if producto else '' }}" placeholder="Ej. Cuaderno A5 de 100 hojas" required></label>
+    <label class="full-width">Descripción<textarea name="descripcion" maxlength="1000" placeholder="Contá los detalles que hacen especial a este producto.">{{ producto.descripcion if producto else '' }}</textarea><small>Hasta 1000 caracteres.</small></label>
+    <label>Precio unitario *<input name="precio" type="number" min="0" max="9999999999.99" step="0.01" value="{{ producto.precio if producto else '' }}" placeholder="0.00" required><small>Hasta dos decimales.</small></label>
+    <label>Proveedor *<select name="proveedor_id" required><option value="" disabled {% if not producto %}selected{% endif %}>Seleccioná un proveedor</option>{% for proveedor in proveedores %}<option value="{{ proveedor.id }}" {% if producto and producto.proveedor_id == proveedor.id %}selected{% endif %}>{{ proveedor.nombre }}</option>{% endfor %}</select></label>
+    {% if producto %}
+    <label class="full-width check-label"><input type="checkbox" name="activo" value="1" {% if producto.activo %}checked{% endif %}> Producto activo y visible en el catálogo</label>
+    {% else %}
+    <label>Stock inicial *<input name="cantidad" type="number" min="0" max="2147483647" step="1" value="0" required><small>Luego podés ajustarlo desde el inventario.</small></label>
+    {% endif %}
+  </div>
+  <div class="form-actions"><button type="submit">Guardar producto ↗</button><a href="{{ url_for('productos') }}">Cancelar</a></div>
 </form>
-{% else %}
-<p>Primero debe <a href="{{ url_for('nuevo_proveedor') }}">registrar un proveedor</a>.</p>
-{% endif %}
+{% else %}<div class="empty-state"><span aria-hidden="true">♧</span><h3>Empecemos por un proveedor</h3><p>Necesitás registrar al menos uno antes de agregar productos.</p><a class="button" href="{{ url_for('nuevo_proveedor') }}">Registrar proveedor ↗</a></div>{% endif %}
 {% endblock %}

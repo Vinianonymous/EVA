@@ -1,30 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}Registrar venta{% endblock %}
 {% block content %}
-<h2>Registrar venta</h2>
+<a class="back-link" href="{{ url_for('ventas') }}">← Historial de ventas</a>
+<div class="page-heading"><div><p class="eyebrow">UNA IDEA EN MARCHA</p><h1>Registrar venta<span class="accent">.</span></h1><p>Elegí las cantidades. Dejá en cero los productos que no quieras incluir.</p></div></div>
 {% if productos %}
-<p>Indique las cantidades a vender. Deje en cero los productos que no desea incluir.</p>
-<form method="post" action="{{ url_for('crear_venta') }}">
+<form method="post" action="{{ url_for('crear_venta') }}" data-sale-form data-confirm="¿Confirmar esta venta? Se descontarán las cantidades seleccionadas del inventario.">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <div class="tabla">
-    <table>
-      <thead><tr><th>Producto</th><th>Precio unitario</th><th>Stock</th><th>Cantidad</th></tr></thead>
-      <tbody>
-        {% for producto in productos %}
-        <tr>
-          <td>{{ producto.nombre }}<input type="hidden" name="producto_id" value="{{ producto.id }}"></td>
-          <td>{{ '%.2f'|format(producto.precio) }}</td><td>{{ producto.cantidad }}</td>
-          <td><input aria-label="Cantidad de {{ producto.nombre }}" name="cantidad" type="number" min="0" max="{{ producto.cantidad }}" step="1" value="0" required></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <p>El servidor verifica el stock y calcula el total con los precios vigentes al confirmar.</p>
-  <button type="submit">Confirmar venta</button>
-  <a href="{{ url_for('ventas') }}">Cancelar</a>
+  <div class="sale-layout"><div data-filter-list>
+    <div class="filter-toolbar"><label class="search-field"><span class="sr-only">Buscar productos para la venta</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Buscar un producto…" data-search></label></div>
+    <div class="tabla" role="region" aria-label="Productos disponibles para vender" tabindex="0"><table><thead><tr><th scope="col">Producto</th><th scope="col">Precio unitario</th><th scope="col">Stock</th><th scope="col">Cantidad</th></tr></thead><tbody>
+    {% for producto in productos %}
+    <tr data-item data-search-text="{{ producto.nombre }}">
+      <td><strong>{{ producto.nombre }}</strong><input type="hidden" name="producto_id" value="{{ producto.id }}"></td><td><span class="numeric">{{ '{:,.2f}'.format(producto.precio) }}</span></td><td><span class="badge badge-green">{{ producto.cantidad }}</span></td><td><input aria-label="Cantidad de {{ producto.nombre }}" name="cantidad" type="number" min="0" max="{{ producto.cantidad }}" step="1" value="0" data-sale-quantity data-price="{{ producto.precio }}" data-name="{{ producto.nombre }}" required></td>
+    </tr>
+    {% endfor %}
+    </tbody></table></div><p class="form-help" data-no-results hidden>No hay coincidencias. Probá con otro nombre. Los productos seleccionados se mantienen en el resumen.</p>
+  </div><aside class="panel" aria-label="Resumen de venta"><h2>Tu venta.</h2><p data-sale-count role="status">Seleccioná al menos un producto.</p><ul class="sale-selection" data-sale-selection></ul><p class="eyebrow">TOTAL ESTIMADO</p><p class="sale-total" data-sale-total>0.00</p><p>El servidor verifica el stock y calcula el total con los precios vigentes al confirmar.</p><p class="sale-error" data-sale-error role="alert" hidden></p><button type="submit">Confirmar venta ↗</button><a class="cancel-link" href="{{ url_for('ventas') }}">Cancelar</a><noscript><p>El resumen necesita JavaScript. Aun así, podés ingresar cantidades y confirmar; el servidor calculará el total.</p></noscript></aside></div>
 </form>
-{% else %}
-<p>No hay productos activos con stock disponible. <a href="{{ url_for('productos') }}">Revisar inventario</a>.</p>
-{% endif %}
+{% else %}<div class="empty-state"><span aria-hidden="true">▤</span><h3>Primero, un poco de stock</h3><p>No hay productos activos con unidades disponibles para vender.</p><a class="button" href="{{ url_for('productos') }}">Revisar inventario ↗</a></div>{% endif %}
 {% endblock %}

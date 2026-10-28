@@ -88,10 +88,27 @@ reinicios para mantener las sesiones. Para desarrollo solamente, usar
 - Todas las modificaciones usan POST y protección CSRF. Las consultas usan
   parámetros `%s`, nunca concatenación de datos del formulario.
 
+### Interfaz
+
+- `/`: catálogo conectado a MySQL. Solo muestra productos activos, incluyendo
+  agotados. Búsqueda sin distinguir acentos, filtro de disponibilidad y orden por
+  nombre o precio. No hay productos ni precios ficticios cuando la base está vacía.
+- Panel administrativo adaptable a móviles, con búsqueda y filtros en las listas,
+  formularios, ajustes de stock y confirmación de acciones destructivas.
+- Nueva venta: resumen interactivo con cantidades, subtotales y total estimado.
+  El servidor sigue calculando el importe definitivo y verificando existencias.
+  La búsqueda no elimina selecciones; también se pueden enviar ventas sin JavaScript.
+- Todos los recursos visuales son locales. Las ilustraciones del catálogo no son
+  fotografías de los productos. Los precios se muestran con dos decimales, sin
+  asumir una moneda que aún no está configurada en el modelo de datos.
+- CSS y JavaScript se sirven desde `static/`; no hace falta Node ni compilación.
+- Páginas de error para enlaces inexistentes, formularios vencidos y MySQL no disponible.
+
 **Alcance:** administración local para el proyecto de clase, sin inicio de
 sesión ni roles. CSRF no reemplaza la autenticación: no publicar estas rutas
-en Internet antes de agregar autenticación y autorización. La tienda conserva
-su contenido de ejemplo; no se implementa carrito ni pagos.
+en Internet antes de agregar autenticación y autorización. El catálogo es
+informativo; no se implementa carrito, checkout ni pagos. No usar el registro
+administrativo de ventas como checkout público.
 
 ### Pruebas
 
@@ -116,3 +133,17 @@ EVA_TEST_DB=eva_test python -m unittest discover -s tests -v
 
 Las pruebas de integración usan las variables `MYSQL_*` y **vacían las cinco
 tablas de la base de pruebas en cada caso**. Nunca apuntarlas a datos reales.
+
+### Pruebas de navegador (opcionales)
+
+Con EVA ya iniciado y MySQL configurado, se pueden comprobar los tamaños de
+pantalla (320, 390, 768 y 1440 px), accesibilidad automatizada WCAG A/AA,
+filtros y resumen de ventas. Estas pruebas **no modifican datos**. Para cubrir
+también los controles del catálogo y de ventas, cargar productos activos con stock.
+Node solo es necesario para estas pruebas, no para usar EVA.
+
+```bash
+npm install --prefix /tmp/opencode/eva-browser playwright @axe-core/playwright
+/tmp/opencode/eva-browser/node_modules/.bin/playwright install chromium
+NODE_PATH=/tmp/opencode/eva-browser/node_modules EVA_URL=http://127.0.0.1:5000 node tests/browser.cjs
+```

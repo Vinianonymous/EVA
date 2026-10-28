@@ -1,37 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}Productos e inventario{% endblock %}
 {% block content %}
-<h2>Productos e inventario</h2>
-<p><a href="{{ url_for('nuevo_producto') }}">Agregar producto</a></p>
-<p>Para ajustar el stock, ingrese una cantidad positiva (entrada) o negativa (salida).</p>
-<div class="tabla">
-  <table>
-    <thead><tr><th>Producto</th><th>Proveedor</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead>
-    <tbody>
-      {% for producto in productos %}
-      <tr>
-        <td>{{ producto.nombre }}<br><small>{{ producto.descripcion }}</small></td>
-        <td>{{ producto.proveedor }}</td><td>{{ '%.2f'|format(producto.precio) }}</td>
-        <td>{{ producto.cantidad }}</td><td>{{ 'Activo' if producto.activo else 'Inactivo' }}</td>
-        <td>
-          <a href="{{ url_for('formulario_producto', id=producto.id) }}">Editar</a>
-          {% if producto.activo %}
-          <form method="post" action="{{ url_for('borrar_producto', id=producto.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit">Desactivar</button>
-          </form>
-          {% endif %}
-          <form method="post" action="{{ url_for('actualizar_inventario', producto_id=producto.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label>Ajuste de {{ producto.nombre }}
-              <input name="ajuste" type="number" step="1" min="-2147483647" max="2147483647" required>
-            </label>
-            <button type="submit">Ajustar stock</button>
-          </form>
-        </td>
-      </tr>
-      {% else %}<tr><td colspan="6">No hay productos registrados.</td></tr>{% endfor %}
-    </tbody>
-  </table>
+<div class="page-heading"><div><p class="eyebrow">CADA COSA EN SU LUGAR</p><h1>Productos e inventario<span class="accent">.</span></h1><p>Administrá tu catálogo y mantené el stock al día.</p></div><a class="button" href="{{ url_for('nuevo_producto') }}">+ Agregar producto</a></div>
+<div data-filter-list>
+  <form class="filter-toolbar" role="search" data-filter-form><label class="search-field"><span class="sr-only">Buscar productos o proveedores</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Buscar por producto o proveedor…" data-search></label><label class="select-label">Estado<select data-status><option value="all">Todos los estados</option><option value="active">Activos</option><option value="inactive">Inactivos</option></select></label></form>
+  <p class="results-line" data-result-count role="status">{{ productos|length }} productos</p>
+  <div class="tabla" role="region" aria-label="Productos e inventario" tabindex="0"><table><thead><tr><th scope="col">Producto</th><th scope="col">Proveedor</th><th scope="col">Precio unitario</th><th scope="col">Stock</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead><tbody>
+    {% for producto in productos %}
+    <tr data-item data-search-text="{{ producto.nombre }} {{ producto.proveedor }} {{ producto.descripcion }}" data-status="{{ 'active' if producto.activo else 'inactive' }}">
+      <td><strong>{{ producto.nombre }}</strong><small>{{ producto.descripcion }}</small></td><td>{{ producto.proveedor }}</td><td><span class="numeric">{{ '{:,.2f}'.format(producto.precio) }}</span></td><td><span class="badge {{ 'badge-orange' if producto.cantidad == 0 else 'badge-green' }}">{{ producto.cantidad }}</span></td><td><span class="badge {{ 'badge-green' if producto.activo else 'badge-muted' }}">{{ 'Activo' if producto.activo else 'Inactivo' }}</span></td>
+      <td><div class="table-actions"><a href="{{ url_for('formulario_producto', id=producto.id) }}" aria-label="Editar {{ producto.nombre }}">Editar</a>{% if producto.activo %}<form method="post" action="{{ url_for('borrar_producto', id=producto.id) }}" data-confirm="¿Desactivar este producto? Dejará de aparecer en el catálogo; se conservará su historial."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" aria-label="Desactivar {{ producto.nombre }}">Desactivar</button></form>{% endif %}</div>
+      <details class="stock-adjust"><summary>Ajustar stock</summary><form method="post" action="{{ url_for('actualizar_inventario', producto_id=producto.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>Ajuste de {{ producto.nombre }}<input name="ajuste" type="number" step="1" min="-2147483647" max="2147483647" placeholder="Ej. 10 o -2" required></label><small>Positivo: entrada. Negativo: salida.</small><button type="submit">Aplicar ajuste</button></form></details></td>
+    </tr>
+    {% else %}<tr><td colspan="6" class="table-empty">Todavía no hay productos. <a class="text-link" href="{{ url_for('nuevo_producto') }}">Agregá el primero ↗</a></td></tr>{% endfor %}
+  </tbody></table></div><div class="empty-state" data-no-results hidden><h3>No encontramos productos</h3><p>Probá otra búsqueda o cambiá el estado.</p><button type="button" class="button button-outline" data-reset-filters>Limpiar filtros</button></div>
 </div>
 {% endblock %}

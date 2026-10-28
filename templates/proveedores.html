@@ -1,25 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}Proveedores{% endblock %}
 {% block content %}
-<h2>Proveedores</h2>
-<p><a href="{{ url_for('nuevo_proveedor') }}">Agregar proveedor</a></p>
-<div class="tabla">
-  <table>
-    <thead><tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr></thead>
-    <tbody>
-      {% for proveedor in proveedores %}
-      <tr>
-        <td>{{ proveedor.nombre }}</td><td>{{ proveedor.telefono }}</td><td>{{ proveedor.direccion }}</td>
-        <td>
-          <a href="{{ url_for('formulario_proveedor', id=proveedor.id) }}">Editar</a>
-          <form method="post" action="{{ url_for('borrar_proveedor', id=proveedor.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit">Eliminar proveedor</button>
-          </form>
-        </td>
-      </tr>
-      {% else %}<tr><td colspan="4">No hay proveedores registrados.</td></tr>{% endfor %}
-    </tbody>
-  </table>
-</div>
+<div class="page-heading"><div><p class="eyebrow">TU RED DE ALIADOS</p><h1>Proveedores<span class="accent">.</span></h1><p>Los contactos detrás de cada producto.</p></div><a class="button" href="{{ url_for('nuevo_proveedor') }}">+ Agregar proveedor</a></div>
+<div data-filter-list>
+<form class="filter-toolbar" role="search" data-filter-form><label class="search-field"><span class="sr-only">Buscar proveedores</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Buscar por nombre, teléfono o dirección…" data-search></label></form><p class="results-line" data-result-count role="status">{{ proveedores|length }} proveedores</p>
+<div class="tabla" role="region" aria-label="Proveedores" tabindex="0"><table><thead><tr><th scope="col">Nombre</th><th scope="col">Teléfono</th><th scope="col">Dirección</th><th scope="col">Acciones</th></tr></thead><tbody>
+{% for proveedor in proveedores %}
+<tr data-item data-search-text="{{ proveedor.nombre }} {{ proveedor.telefono }} {{ proveedor.direccion }}"><td><strong>{{ proveedor.nombre }}</strong><small>Proveedor #{{ proveedor.id }}</small></td><td>{{ proveedor.telefono or 'Sin teléfono' }}</td><td>{{ proveedor.direccion or 'Sin dirección' }}</td><td><div class="table-actions"><a href="{{ url_for('formulario_proveedor', id=proveedor.id) }}" aria-label="Editar {{ proveedor.nombre }}">Editar</a><form method="post" action="{{ url_for('borrar_proveedor', id=proveedor.id) }}" data-confirm="¿Eliminar este proveedor? Esta acción no se puede deshacer. Solo es posible si no tiene productos asociados."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" aria-label="Eliminar {{ proveedor.nombre }}">Eliminar</button></form></div></td></tr>
+{% else %}<tr><td colspan="4" class="table-empty">Todavía no hay proveedores. <a class="text-link" href="{{ url_for('nuevo_proveedor') }}">Agregá el primero ↗</a></td></tr>{% endfor %}
+</tbody></table></div><div class="empty-state" data-no-results hidden><h3>No encontramos proveedores</h3><p>Probá con otro nombre o dato de contacto.</p><button type="button" class="button button-outline" data-reset-filters>Limpiar búsqueda</button></div></div>
 {% endblock %}

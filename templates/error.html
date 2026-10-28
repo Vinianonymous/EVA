@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}<section class="empty-state error-page"><p class="eyebrow">EVA / {{ codigo }}</p><h1>{{ titulo }}</h1><p>{{ mensaje }}</p><a class="button" href="{{ url_for('home') }}">Volver al inicio ↗</a></section>{% endblock %}

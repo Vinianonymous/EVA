@@ -1,12 +1,11 @@
-from flask import Flask
-
-app = Flask(__name__)
 import os
 from decimal import Decimal, InvalidOperation
 
 from flask import Flask, abort, flash, redirect, render_template, request, url_for
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFError
+from MySQLdb import Error as DatabaseError
 
 app = Flask(__name__)
 app.config.update(
@@ -105,12 +104,31 @@ def precio(valor):
 
 @app.route("/")
 def home():
-    return "<p>Hello world</p>"
+    registros = consultar("""
+        SELECT p.id, p.nombre, p.descripcion, p.precio, i.cantidad
+        FROM productos p JOIN inventario i ON i.producto_id = p.id
+        WHERE p.activo = 1 ORDER BY p.nombre, p.id
+    """)
+    return render_template("index.html", productos=registros)
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
-    return render_template("index.html")
+@app.errorhandler(CSRFError)
+def csrf_error(error):
+    return render_template("error.html", codigo=400, titulo="El formulario venció",
+                           mensaje="Volvé a abrir el formulario e intentá nuevamente. No se guardaron cambios."), 400
+
+
+@app.errorhandler(404)
+def no_encontrado(error):
+    return render_template("error.html", codigo=404, titulo="Esta página no está aquí",
+                           mensaje="El enlace no existe o el registro ya no está disponible."), 404
+
+
+@app.errorhandler(DatabaseError)
+def base_no_disponible(error):
+    app.logger.exception("No se pudo acceder a MySQL")
+    return render_template("error.html", codigo=503, titulo="Estamos haciendo una pausa",
+                           mensaje="No pudimos conectar con la base de datos. Intentá nuevamente en unos minutos."), 503
 
 
 @app.route("/admin")

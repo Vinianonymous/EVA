@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}Resumen{% endblock %}
 {% block content %}
-<h2>Resumen</h2>
-<dl>
-  <dt>Productos activos</dt><dd>{{ resumen.productos }}</dd>
-  <dt>Proveedores</dt><dd>{{ resumen.proveedores }}</dd>
-  <dt>Ventas vigentes</dt><dd>{{ resumen.ventas }}</dd>
-  <dt>Total vendido (sin anulaciones)</dt><dd>{{ '%.2f'|format(resumen.total) }}</dd>
+<div class="page-heading"><div><p class="eyebrow">TODO EN SU LUGAR</p><h1>El día empieza acá<span class="accent">.</span></h1><p>Una mirada a lo que está pasando en EVA.</p></div><a class="button" href="{{ url_for('nueva_venta') }}">+ Registrar venta</a></div>
+<dl class="metrics-grid">
+  <div class="metric"><dt>Productos activos</dt><dd>{{ resumen.productos }}<small>Listos para el catálogo</small></dd></div>
+  <div class="metric"><dt>Proveedores</dt><dd>{{ resumen.proveedores }}<small>Aliados de tus ideas</small></dd></div>
+  <div class="metric"><dt>Ventas vigentes</dt><dd>{{ resumen.ventas }}<small>Sin ventas anuladas</small></dd></div>
+  <div class="metric metric-highlight"><dt>Total vendido</dt><dd>{{ '{:,.2f}'.format(resumen.total) }}<small>Acumulado · Sin anulaciones</small></dd></div>
 </dl>
-<p><a href="{{ url_for('nueva_venta') }}">Registrar una venta</a></p>
+<div class="dashboard-grid"><section class="panel"><h2>Vamos a lo importante.</h2><p>Todo lo que necesitás para gestionar la librería.</p><a class="quick-link" href="{{ url_for('productos') }}"><span>Productos e inventario<small>Precios, disponibilidad y ajustes de stock</small></span><span aria-hidden="true">↗</span></a><a class="quick-link" href="{{ url_for('proveedores') }}"><span>Tu red de proveedores<small>Datos de contacto y nuevos aliados</small></span><span aria-hidden="true">↗</span></a><a class="quick-link" href="{{ url_for('ventas') }}"><span>Historial de ventas<small>Consultá detalles y gestioná anulaciones</small></span><span aria-hidden="true">↗</span></a></section><section class="panel note-panel"><span class="large-star" aria-hidden="true">✳</span><p class="eyebrow">UN INVENTARIO, MUCHAS POSIBILIDADES</p><h2>Las buenas ideas<br>también se organizan.</h2><p>Los cambios en productos y stock se reflejan en el catálogo. Cada venta descuenta existencias y cada anulación las devuelve.</p><a class="text-link" href="{{ url_for('home') }}">Ver el catálogo <span aria-hidden="true">↗</span></a><small>Uso local: este panel todavía no tiene inicio de sesión. No lo publiques en Internet.</small></section></div>
 {% endblock %}

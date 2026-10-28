@@ -1,32 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Ventas{% endblock %}
 {% block content %}
-<h2>Ventas</h2>
-<p><a href="{{ url_for('nueva_venta') }}">Registrar venta</a></p>
-<div class="tabla">
-  <table>
-    <thead><tr><th>Número</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Detalle</th><th>Acciones</th></tr></thead>
-    <tbody>
-      {% for venta in ventas %}
-      <tr>
-        <td>{{ venta.id }}</td><td>{{ venta.fecha }}</td><td>{{ '%.2f'|format(venta.total) }}</td>
-        <td>{{ 'Anulada' if venta.anulada else 'Vigente' }}</td>
-        <td><ul>
-          {% for detalle in detalles.get(venta.id, []) %}
-          <li>{{ detalle.nombre }}: {{ detalle.cantidad }} × {{ '%.2f'|format(detalle.precio_unitario) }}</li>
-          {% endfor %}
-        </ul></td>
-        <td>
-          {% if not venta.anulada %}
-          <form method="post" action="{{ url_for('anular_venta', id=venta.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit">Anular y restaurar stock</button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% else %}<tr><td colspan="6">No hay ventas registradas.</td></tr>{% endfor %}
-    </tbody>
-  </table>
-</div>
+<div class="page-heading"><div><p class="eyebrow">CADA VENTA CUENTA</p><h1>Historial de ventas<span class="accent">.</span></h1><p>Consultá operaciones, sus detalles y el estado de cada venta.</p></div><a class="button" href="{{ url_for('nueva_venta') }}">+ Registrar venta</a></div>
+<div data-filter-list><form class="filter-toolbar" role="search" data-filter-form><label class="search-field"><span class="sr-only">Buscar ventas</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Buscar por número, fecha o producto…" data-search></label><label class="select-label">Estado<select data-status><option value="all">Todas las ventas</option><option value="active">Vigentes</option><option value="cancelled">Anuladas</option></select></label></form><p class="results-line" data-result-count role="status">{{ ventas|length }} ventas</p>
+<div class="tabla" role="region" aria-label="Historial de ventas" tabindex="0"><table><thead><tr><th scope="col">Venta</th><th scope="col">Fecha</th><th scope="col">Total</th><th scope="col">Estado</th><th scope="col">Detalle</th><th scope="col">Acciones</th></tr></thead><tbody>
+{% for venta in ventas %}
+<tr data-item data-status="{{ 'cancelled' if venta.anulada else 'active' }}" data-search-text="{{ venta.id }} {{ venta.fecha }} {% for detalle in detalles.get(venta.id, []) %}{{ detalle.nombre }} {% endfor %}"><td><strong>#{{ venta.id }}</strong></td><td>{{ venta.fecha }}</td><td><span class="numeric">{{ '{:,.2f}'.format(venta.total) }}</span></td><td><span class="badge {{ 'badge-muted' if venta.anulada else 'badge-green' }}">{{ 'Anulada' if venta.anulada else 'Vigente' }}</span></td><td><details class="sales-detail"><summary>Ver {{ detalles.get(venta.id, [])|length }} líneas</summary><ul>{% for detalle in detalles.get(venta.id, []) %}<li>{{ detalle.nombre }}<small>{{ detalle.cantidad }} × {{ '{:,.2f}'.format(detalle.precio_unitario) }}</small></li>{% endfor %}</ul></details></td><td>{% if not venta.anulada %}<div class="table-actions"><form method="post" action="{{ url_for('anular_venta', id=venta.id) }}" data-confirm="¿Anular esta venta? Se devolverán todas sus unidades al inventario. Esta acción no se puede deshacer."><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" aria-label="Anular venta {{ venta.id }} y restaurar stock">Anular venta</button></form></div>{% else %}<small>Stock restaurado</small>{% endif %}</td></tr>
+{% else %}<tr><td colspan="6" class="table-empty">Todavía no hay ventas. <a class="text-link" href="{{ url_for('nueva_venta') }}">Registrá la primera ↗</a></td></tr>{% endfor %}
+</tbody></table></div><div class="empty-state" data-no-results hidden><h3>No encontramos ventas</h3><p>Probá otra búsqueda o cambiá el estado.</p><button type="button" class="button button-outline" data-reset-filters>Limpiar filtros</button></div></div>
 {% endblock %}

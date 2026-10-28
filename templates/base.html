@@ -3,25 +3,36 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#234d3c">
     <title>{% block title %}Administración{% endblock %} — EVA</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+    <script src="{{ url_for('static', filename='main.js') }}" defer></script>
   </head>
-  <body>
-    <header>
-      <h1>EVA · Administración</h1>
-      <nav aria-label="Navegación principal">
-        <a href="{{ url_for('home') }}">Tienda</a>
-        <a href="{{ url_for('dashboard') }}">Resumen</a>
-        <a href="{{ url_for('productos') }}">Productos e inventario</a>
-        <a href="{{ url_for('proveedores') }}">Proveedores</a>
-        <a href="{{ url_for('ventas') }}">Ventas</a>
+  <body class="{% block body_class %}admin-page{% endblock %}">
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    {% block navigation %}
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="EVA, inicio">eva<span>✳</span></a>
+      <span class="eyebrow">ESPACIO DE GESTIÓN</span>
+      <nav aria-label="Administración">
+        <a href="{{ url_for('dashboard') }}" {% if request.endpoint == 'dashboard' %}aria-current="page"{% endif %}><span aria-hidden="true">◫</span> Resumen</a>
+        <a href="{{ url_for('productos') }}" {% if request.endpoint in ['productos', 'nuevo_producto', 'formulario_producto'] %}aria-current="page"{% endif %}><span aria-hidden="true">▤</span> Productos e inventario</a>
+        <a href="{{ url_for('proveedores') }}" {% if request.endpoint in ['proveedores', 'nuevo_proveedor', 'formulario_proveedor'] %}aria-current="page"{% endif %}><span aria-hidden="true">♧</span> Proveedores</a>
+        <a href="{{ url_for('ventas') }}" {% if request.endpoint in ['ventas', 'nueva_venta'] %}aria-current="page"{% endif %}><span aria-hidden="true">↗</span> Ventas</a>
       </nav>
-    </header>
-    <main>
-      {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
-        <p class="mensaje {{ categoria }}" role="status">{{ mensaje }}</p>
-      {% endfor %}
-      {% block content %}{% endblock %}
-    </main>
+      <div class="sidebar-bottom"><a href="{{ url_for('home') }}">Ver catálogo <span aria-hidden="true">↗</span></a><small>Administración local · Sin autenticación</small></div>
+    </aside>
+    {% endblock %}
+    <div class="page-wrap">
+      {% block topbar %}<header class="admin-topbar"><span>Librería & artículos de oficina</span><a href="{{ url_for('nueva_venta') }}">+ Nueva venta</a></header>{% endblock %}
+      <main id="contenido" tabindex="-1">
+        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+        <div class="mensaje {{ categoria }}" role="{{ 'alert' if categoria == 'error' else 'status' }}"><span>{{ mensaje }}</span><button type="button" data-dismiss aria-label="Cerrar mensaje">×</button></div>
+        {% endfor %}
+        {% block content %}{% endblock %}
+      </main>
+      {% block footer %}<footer class="admin-footer">EVA · Un espacio para tus ideas.</footer>{% endblock %}
+    </div>
   </body>
 </html>

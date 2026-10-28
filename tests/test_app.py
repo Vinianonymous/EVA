@@ -17,9 +17,10 @@ class BackendTests(unittest.TestCase):
         self.client = backend.app.test_client()
 
     def test_storefront_is_preserved(self):
-        response = self.client.get("/")
+        with patch.object(backend, "consultar", return_value=[]):
+            response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Temporada escolar 2026", response.data)
+        self.assertIn(b"TEMPORADA ESCOLAR 2026", response.data)
         self.assertIn(b"/admin", response.data)
 
     def test_price_validation(self):

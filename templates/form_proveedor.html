@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}{{ 'Editar' if proveedor else 'Agregar' }} proveedor{% endblock %}
 {% block content %}
-<h2>{{ 'Editar' if proveedor else 'Agregar' }} proveedor</h2>
-<form method="post" action="{{ url_for('editar_proveedor', id=proveedor.id) if proveedor else url_for('crear_proveedor') }}">
+<a class="back-link" href="{{ url_for('proveedores') }}">← Proveedores</a>
+<div class="page-heading"><div><p class="eyebrow">CRECEMOS EN EQUIPO</p><h1>{{ 'Editar' if proveedor else 'Agregar' }} proveedor<span class="accent">.</span></h1><p>Guardá los datos de tu aliado. Los campos con * son obligatorios.</p></div></div>
+<form class="panel form-panel" method="post" action="{{ url_for('editar_proveedor', id=proveedor.id) if proveedor else url_for('crear_proveedor') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Nombre <input name="nombre" maxlength="120" value="{{ proveedor.nombre if proveedor else '' }}" required></label>
-  <label>Teléfono <input name="telefono" type="tel" maxlength="30" value="{{ proveedor.telefono if proveedor else '' }}"></label>
-  <label>Dirección <input name="direccion" maxlength="255" value="{{ proveedor.direccion if proveedor else '' }}"></label>
-  <button type="submit">Guardar</button>
-  <a href="{{ url_for('proveedores') }}">Cancelar</a>
+  <div class="form-grid">
+    <label class="full-width">Nombre *<input name="nombre" maxlength="120" value="{{ proveedor.nombre if proveedor else '' }}" placeholder="Ej. Distribuidora Escolar" required autocomplete="organization"></label>
+    <label>Teléfono<input name="telefono" type="tel" maxlength="30" value="{{ proveedor.telefono if proveedor else '' }}" placeholder="Número de contacto" autocomplete="tel"><small>Opcional.</small></label>
+    <label class="full-width">Dirección<input name="direccion" maxlength="255" value="{{ proveedor.direccion if proveedor else '' }}" placeholder="Calle, número y ciudad" autocomplete="street-address"><small>Opcional.</small></label>
+  </div><div class="form-actions"><button type="submit">Guardar proveedor ↗</button><a href="{{ url_for('proveedores') }}">Cancelar</a></div>
 </form>
 {% endblock %}
