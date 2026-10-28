@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Proveedores{% endblock %}
+{% block content %}
+<h2>Proveedores</h2>
+<p><a href="{{ url_for('nuevo_proveedor') }}">Agregar proveedor</a></p>
+<div class="tabla">
+  <table>
+    <thead><tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for proveedor in proveedores %}
+      <tr>
+        <td>{{ proveedor.nombre }}</td><td>{{ proveedor.telefono }}</td><td>{{ proveedor.direccion }}</td>
+        <td>
+          <a href="{{ url_for('formulario_proveedor', id=proveedor.id) }}">Editar</a>
+          <form method="post" action="{{ url_for('borrar_proveedor', id=proveedor.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Eliminar proveedor</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}<tr><td colspan="4">No hay proveedores registrados.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

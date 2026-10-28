@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Productos e inventario{% endblock %}
+{% block content %}
+<h2>Productos e inventario</h2>
+<p><a href="{{ url_for('nuevo_producto') }}">Agregar producto</a></p>
+<p>Para ajustar el stock, ingrese una cantidad positiva (entrada) o negativa (salida).</p>
+<div class="tabla">
+  <table>
+    <thead><tr><th>Producto</th><th>Proveedor</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for producto in productos %}
+      <tr>
+        <td>{{ producto.nombre }}<br><small>{{ producto.descripcion }}</small></td>
+        <td>{{ producto.proveedor }}</td><td>{{ '%.2f'|format(producto.precio) }}</td>
+        <td>{{ producto.cantidad }}</td><td>{{ 'Activo' if producto.activo else 'Inactivo' }}</td>
+        <td>
+          <a href="{{ url_for('formulario_producto', id=producto.id) }}">Editar</a>
+          {% if producto.activo %}
+          <form method="post" action="{{ url_for('borrar_producto', id=producto.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Desactivar</button>
+          </form>
+          {% endif %}
+          <form method="post" action="{{ url_for('actualizar_inventario', producto_id=producto.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Ajuste de {{ producto.nombre }}
+              <input name="ajuste" type="number" step="1" min="-2147483647" max="2147483647" required>
+            </label>
+            <button type="submit">Ajustar stock</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}<tr><td colspan="6">No hay productos registrados.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

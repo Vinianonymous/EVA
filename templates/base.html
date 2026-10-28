@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Administración{% endblock %} — EVA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+  </head>
+  <body>
+    <header>
+      <h1>EVA · Administración</h1>
+      <nav aria-label="Navegación principal">
+        <a href="{{ url_for('home') }}">Tienda</a>
+        <a href="{{ url_for('dashboard') }}">Resumen</a>
+        <a href="{{ url_for('productos') }}">Productos e inventario</a>
+        <a href="{{ url_for('proveedores') }}">Proveedores</a>
+        <a href="{{ url_for('ventas') }}">Ventas</a>
+      </nav>
+    </header>
+    <main>
+      {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+        <p class="mensaje {{ categoria }}" role="status">{{ mensaje }}</p>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
